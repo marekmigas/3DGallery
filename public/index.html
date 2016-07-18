@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="js/jquery-3.0.0.min.js"></script>
+    <script type="text/javascript" src="vendor/materialize/js/materialize.min.js"></script>
+    <script type="text/javascript" src="js/angular.min.js"></script>
+    <script type="text/javascript" src="js/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular-resource.min.js"></script>
+    <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript" src="js/angular-base64-master/angular-base64.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="vendor/materialize/css/materialize.min.css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+
+    <title>Another Index</title>
+    <style>
+        .width-30-pct {
+            width: 30%;
+        }
+
+        .text-align-center {
+            text-align: center;
+        }
+
+        .margin-bottom-1em {
+            margin-bottom: 1em;
+        }
+    </style>
+</head>
+<body ng-app="GalleryApp">
+
+<div class="container" ng-controller="RoomsCtrl">
+    <div class="row">
+        <div class="col s12">
+            <h4 id="heading">Rooms</h4>
+
+            <input type="text" ng-model="search" class="form-control" placeholder="Search rooms..."/>
+
+            <table class="hoverable bordered highlight">
+
+                <thead>
+                <tr>
+                    <th class="text-align-center">ID</th>
+                    <th class="width-30-pct">Name</th>
+                    <th class="width-30-pct">Description</th>
+                    <th class="text-align-center">Action</th>
+                </tr>
+                </thead>
+
+                <tr ng-repeat="rp in roomPictures | filter:search">
+                    <td class="text-align-center">{{ rp.id_room_picture }}</td>
+                    <td>{{ rp.name }}</td>
+                    <td>{{ rp.description }}</td>
+                    <td class="text-align-center">
+                        <a ng-click="showOne(rp.id_room_picture)"
+                           class="waves-effect waves-light btn margin-bottom-1em"><i
+                                class="material-icons left">edit</i>Edit</a>
+                        <a ng-click="deleteRoom(rp)" class="waves-effect waves-light btn margin-bottom-1em"><i
+                                class="material-icons left">delete</i>Delete</a>
+                    </td>
+                </tr>
+
+            </table>
+
+            <!-- ========================================  Creating new Room    ======================================== -->
+            <div id="modal-room-form" class="modal">
+                <div class="modal-content">
+                    <h4 id="modal-room-title">Create New Room</h4>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input ng-model="name" type="text" class="validate" id="form-name"
+                                   placeholder="Type name here..."/>
+                            <label for="form-name">Name</label>
+                        </div>
+                        <div class="input-field col s12">
+                            <textarea ng-model="description" type="text" class="validate materialize-textarea"
+                                      placeholder="Type description here..." id="form-desc"></textarea>
+                            <label for="form-desc">Description</label>
+                        </div>
+
+                        <!-- Number of pictures in room -->
+                        <div class="input-field col s12">
+                            <p>
+                                <input name="group1" ng-model="paintings" type="radio" id="test1" value="4"/>
+                                <label for="test1">Four paintings</label>
+                            </p>
+                            <p>
+                                <input name="group1" ng-model="paintings" type="radio" id="test2" value="6"/>
+                                <label for="test2">Six paintings</label>
+                            </p>
+                        </div>
+
+                        <!-- End number of pictures in room -->
+                        <div class="divider"></div>
+                        <!-- FIRST  FILE INPUT -->
+                        <div id="firstImage">
+                            <h6>First image</h6>
+                            <div class="file-field input-field col s3">
+                                <div class="btn">
+                                    <span>File</span>
+                                    <input type="file" ng-model="image1" class="validate" id="form-image1">
+                                </div>
+                                <div class="file-path-wrapper">
+                                    <input ng-model="file_txt1" class="file-path validate" type="text"
+                                           placeholder="Click to choose an image">
+                                </div>
+                            </div>
+
+                            <div class="input-field col s3">
+                                <input ng-model="pic1_name" type="text" class="validate" id="form-pic_name"
+                                       placeholder="Type name of picture here..."/>
+                                <label for="form-pic_name">Name</label>
+                            </div>
+
+                            <div class="input-field col s2">
+                                <input ng-model="pic1_width" type="number" class="validate" id="form-width1"
+                                       placeholder="Type width of picture here..."/>
+                                <label for="form-width1" data-error="Insert numbers only">Width</label>
+                            </div>
+
+                            <div class="input-field col s2">
+                                <input ng-model="pic1_height" type="number" class="validate" id="form-height1"
+                                       placeholder="Type height of picture here..."/>
+                                <label for="form-height1" data-error="Insert numbers only">Height</label>
+                            </div>
+
+                            <div class="input-field col s2">
+                                <img class="responsive-img img_preview" src="default.png" ng-src="{{pic1_image}}"
+                                     id="pic1_preview">
+                            </div>
+                        </div>
+                        <!-- END FILE INPUT -->
+
+                        <!-- SECOND  FILE INPUT -->
+                        <div id="secondImage">
+                            <h6>Second image</h6>
+                            <div class="file-field input-field col s3">
+                                <div class="btn">
+                                    <span>File</span>
+                                    <input type="file" ng-model="image2" class="validate" id="form-image2"
+                                           base-sixty-four-input>
+                                </div>
+                                <div class="file-path-wrapper">
+                                    <input ng-model="file_txt2" class="file-path validate" type="text"
+                                           placeholder="Click to choose an image">
+                                </div>
+                            </div>
+
+                            <div class="input-field col s3">
+                                <input ng-model="pic2_name" type="text" class="validate" id="form-pic_name2"
+                                       placeholder="Type name of picture here..."/>
+                                <label for="form-pic_name2">Name</label>
+                            </div>
+
+                            <div class="input-field col s2">
+                                <input ng-model="pic2_width" type="number" class="validate" id="form-width2"
+                                       placeholder="Type width of picture here..."/>
+                                <label for="form-width2" data-error="Insert numbers only">Width</label>
+                            </div>
+
+                            <div class="input-field col s2">
+                                <input ng-model="pic2_height" type="number" class="validate" id="form-height2"
+                                       placeholder="Type height of picture here..."/>
+                                <label for="form-height2" data-error="Insert numbers only">Height</label>
+                            </div>
+
+                            <div class="input-field col s2">
+                                <img class="responsive-img img_preview" src="default.png" ng-src="{{pic2_image}}"
+                                     id="pic2_preview">
+                            </div>
+
+                        </div>
+
+                        <!-- END FILE INPUT -->
+
+                        <!-- THIRD  FILE INPUT -->
+                        <div id="thirdImage">
+                            <h6>Third image</h6>
+                            <div class="file-field input-field col s3">
+                                <div class="btn">
+                                    <span>File</span>
+                                    <input type="file" ng-model="image3" class="validate" id="form-image3">
+                                </div>
+                                <div class="file-path-wrapper">
+                                    <input ng-model="file_txt3" class="file-path validate" type="text"
+                                           placeholder="Click to choose an image">
+                                </div>
+                            </div>
+
+                            <div class="input-field col s3">
+                                <input ng-model="pic3_name" type="text" class="validate" id="form-pic_name3"
+                                       placeholder="Type name of picture here..."/>
+                                <label for="form-pic_name3">Name</label>
+                            </div>
+
+                            <div class="input-field col s2">
+                                <input ng-model="pic3_width" type="number" class="validate" id="form-width3"
+                                       placeholder="Type width of picture here..."/>
+                                <label for="form-width3" data-error="Insert numbers only">Width</label>
+                            </div>
+
+                            <div class="input-field col s2">
+                                <input ng-model="pic3_height" type="number" class="validate" id="form-height3"
+                                       placeholder="Type height of picture here..."/>
+                                <label for="form-height3" data-error="Insert numbers only">Height</label>
+                            </div>
+
+                            <div class="input-field col s2">
+                                <img class="responsive-img img_preview" src="default.png" ng-src="{{pic3_image}}"
+                                     id="pic3_preview">
+                            </div>
+
+                        </div>
+
+                        <!-- END FILE INPUT -->
+
+                        <!-- FOURTH  FILE INPUT -->
+                        <div id="fourthImage">
+                            <h6>Fourth image</h6>
+                            <div class="file-field input-field col s3">
+                                <div class="btn">
+                                    <span>File</span>
+                                    <input type="file" ng-model="image4" class="validate" id="form-image4">
+                                </div>
+                                <div class="file-path-wrapper">
+                                    <input ng-model="file_txt4" class="file-path validate" type="text"
+                                           placeholder="Click to choose an image">
+                                </div>
+                            </div>
+
+                            <div class="input-field col s3">
+                                <input ng-model="pic4_name" type="text" class="validate" id="form-pic_name4"
+                                       placeholder="Type name of picture here..."/>
+                                <label for="form-pic_name4">Name</label>
+                            </div>
+
+                            <div class="input-field col s2">
+                                <input ng-model="pic4_width" type="number" class="validate" id="form-width4"
+                                       placeholder="Type width of picture here..."/>
+                                <label for="form-width4" data-error="Insert numbers only">Width</label>
+                            </div>
+
+                            <div class="input-field col s2">
+                                <input ng-model="pic4_height" type="number" class="validate" id="form-height4"
+                                       placeholder="Type height of picture here..."/>
+                                <label for="form-height4" data-error="Insert numbers only">Height</label>
+                            </div>
+
+                            <div class="input-field col s2">
+                                <img class="responsive-img img_preview" src="default.png" ng-src="{{pic4_image}}"
+                                     id="pic4_preview">
+                            </div>
+
+                        </div>
+
+                        <!-- END FILE INPUT -->
+
+                        <!-- FIFTH  FILE INPUT -->
+                        <div id="fifthImage" style="display: none">
+                            <h6>Fifth image</h6>
+                            <div class="file-field input-field col s3">
+                                <div class="btn">
+                                    <span>File</span>
+                                    <input type="file" ng-model="image5" class="validate" id="form-image5">
+                                </div>
+                                <div class="file-path-wrapper">
+                                    <input ng-model="file_txt5" class="file-path validate" type="text"
+                                           placeholder="Click to choose an image">
+                                </div>
+                            </div>
+
+                            <div class="input-field col s3">
+                                <input ng-model="pic5_name" type="text" class="validate" id="form-pic_name5"
+                                       placeholder="Type name of picture here..."/>
+                                <label for="form-pic_name5">Name</label>
+                            </div>
+
+                            <div class="input-field col s2">
+                                <input ng-model="pic5_width" type="number" class="validate" id="form-width5"
+                                       placeholder="Type width of picture here..."/>
+                                <label for="form-width5" data-error="Insert numbers only">Width</label>
+                            </div>
+
+                            <div class="input-field col s2">
+                                <input ng-model="pic5_height" type="number" class="validate" id="form-height5"
+                                       placeholder="Type height of picture here..."/>
+                                <label for="form-height5" data-error="Insert numbers only">Height</label>
+                            </div>
+
+                            <div class="input-field col s2">
+                                <img class="responsive-img img_preview" src="default.png" ng-src="{{pic5_image}}"
+                                     id="pic5_preview">
+                            </div>
+
+                        </div>
+
+                        <!-- END FILE INPUT -->
+
+                        <!-- SIXTH  FILE INPUT -->
+                        <div id="sixthImage" style="display: none">
+                            <h6>Sixth image</h6>
+                            <div class="file-field input-field col s3">
+                                <div class="btn">
+                                    <span>File</span>
+                                    <input type="file" ng-model="image6" class="validate" id="form-image6">
+                                </div>
+                                <div class="file-path-wrapper">
+                                    <input ng-model="file_txt6" class="file-path validate" type="text"
+                                           placeholder="Click to choose an image">
+                                </div>
+                            </div>
+
+                            <div class="input-field col s3">
+                                <input ng-model="pic6_name" type="text" class="validate" id="form-pic_name6"
+                                       placeholder="Type name of picture here..."/>
+                                <label for="form-pic_name6">Name</label>
+                            </div>
+
+                            <div class="input-field col s2">
+                                <input ng-model="pic6_width" type="number" class="validate" id="form-width6"
+                                       placeholder="Type width of picture here..."/>
+                                <label for="form-width6" data-error="Insert numbers only">Width</label>
+                            </div>
+
+                            <div class="input-field col s2">
+                                <input ng-model="pic6_height" type="number" class="validate" id="form-height6"
+                                       placeholder="Type height of picture here..."/>
+                                <label for="form-height6" data-error="Insert numbers only">Height</label>
+                            </div>
+
+                            <div class="input-field col s2">
+                                <img class="responsive-img img_preview" src="default.png" ng-src="{{pic6_image}}"
+                                     id="pic6_preview">
+                            </div>
+
+                        </div>
+
+                        <!-- END FILE INPUT -->
+
+                        <div class="input-field col s12">
+                            <a ng-click="addRoom()" id="btn-create-product"
+                               class="waves-effect waves-light btn margin-bottom-1em"
+                            ><i class="material-icons left">add</i>Create</a>
+
+                            <a ng-click="updateRoom()" id="btn-update-room"
+                               class="waves-effect waves-light btn margin-bottom-1em"
+                            ><i class="material-icons left">edit</i>Save Changes</a>
+
+                            <a class="modal-action modal-close waves-effect waves-light btn margin-bottom-1em"><i
+                                    class="material-icons left">close</i>Close</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- floating button for creating product -->
+            <div class="fixed-action-btn" style="bottom:45px; right:24px;">
+                <a class="waves-effect waves-light btn modal-trigger btn-floating btn-large red"
+                   href="#modal-room-form" ng-click="showCreateForm()"><i class="large material-icons">add</i></a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
